@@ -17,11 +17,18 @@ export default function Navbar() {
   const { user, loading, signOut } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
+  // ✅ DEBUG: Check what role the app sees
+  if (user) console.log("👤 Current User Role:", user.role);
+
   const handleSignOut = async () => {
     await signOut();
     router.refresh();
     router.push("/");
   };
+
+  // ✅ FIX: Determine link based on role
+  const isWorker = user?.role === "worker";
+  const profileLink = isWorker ? "/worker/dashboard" : "/";
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
@@ -41,8 +48,12 @@ export default function Navbar() {
             <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse" />
           ) : user ? (
             <div className="flex items-center gap-2">
-              <Link href={user.role === "worker" ? "/worker/onboarding" : "/dashboard"} className="flex items-center gap-1.5 rounded-full bg-primary-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-primary-700 transition">
-                <User size={16} /> Profil
+              {/* ✅ Dynamic Link */}
+              <Link 
+                href={profileLink} 
+                className="flex items-center gap-1.5 rounded-full bg-primary-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-primary-700 transition"
+              >
+                <User size={16} /> {isWorker ? "Dashboard" : "Profil"}
               </Link>
               <button onClick={handleSignOut} className="p-2 text-gray-500 hover:text-red-600 transition" title="Déconnexion">
                 <LogOut size={18} />
@@ -72,9 +83,19 @@ export default function Navbar() {
             {loading ? (
               <div className="w-full h-10 bg-gray-100 rounded-lg animate-pulse" />
             ) : user ? (
-              <button onClick={() => { handleSignOut(); setIsOpen(false); }} className="flex w-full items-center justify-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-100 transition">
-                <LogOut size={16} /> Déconnexion
-              </button>
+              <div className="space-y-2">
+                {/* ✅ Dynamic Mobile Link */}
+                <Link 
+                  href={profileLink} 
+                  onClick={() => setIsOpen(false)}
+                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary-50 px-3 py-2 text-sm font-medium text-primary-700 hover:bg-primary-100 transition"
+                >
+                  <User size={16} /> {isWorker ? "Dashboard Artisan" : "Mon Profil"}
+                </Link>
+                <button onClick={() => { handleSignOut(); setIsOpen(false); }} className="flex w-full items-center justify-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-100 transition">
+                  <LogOut size={16} /> Déconnexion
+                </button>
+              </div>
             ) : (
               <div className="grid grid-cols-2 gap-2">
                 <Link href="/auth/login" onClick={() => setIsOpen(false)} className="rounded-lg border px-3 py-2 text-center text-sm font-medium hover:bg-gray-50">Connexion</Link>

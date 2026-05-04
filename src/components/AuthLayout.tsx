@@ -16,12 +16,13 @@ export default function AuthLayout({ children, title, subtitle }: AuthLayoutProp
       {/* Left Side: Branding Image */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-gray-100">
         <Image
-          src="/auth-bg.jpg"
-          alt="M3ALLEM - Trouvez le bon artisan"
-          fill
-          className="object-cover"
-          priority
-        />
+  src="/auth-bg.jpg"
+  alt="M3ALLEM - Trouvez le bon artisan"
+  fill
+  sizes="(max-width: 1024px) 100vw, 50vw" // ✅ Added sizes prop
+  className="object-cover"
+  priority
+/>
         {/* Optional: Subtle overlay to ensure text readability if you add any later */}
         <div className="absolute inset-0 bg-primary-900/10" />
       </div>
